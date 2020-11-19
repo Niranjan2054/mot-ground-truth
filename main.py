@@ -1,12 +1,21 @@
 import cv2
 import os
 import csv
+import argparse
 class MOT_GT:
     def __init__(self):
+        parser=argparse.ArgumentParser(description="Generate Groung Truth File")
+        parser.add_argument('--data',dest="data",type=str,help='a directory containing images to label',default='data')
+        parser.add_argument('--result',dest='result',type=str,help='a filename to store result',default='gt')
+        args = parser.parse_args()
+        self.data = args.data
+        self.dest = args.result
+        print(self.data,self.dest)
+
         self.RECTANGLE_START = False
         self.RECTANGLE_END = False
         self.rectange = [[0,0],[0,0]]
-        self.imageList = os.listdir("data")
+        self.imageList = os.listdir(self.data)
         cv2.namedWindow(winname="Thumbnail")
         cv2.setMouseCallback("Thumbnail",self.get_point)
         self.image = None
@@ -49,7 +58,7 @@ class MOT_GT:
         cv2.rectangle(self.image,tuple(self.rectange[0]),tuple(self.rectange[1]),(0,0,255),2)
 
     def save_in_file(self):
-        with open('gt.txt', 'w') as f: 
+        with open(self.dest+'.txt', 'w') as f: 
             write = csv.writer(f) 
             write.writerows(self.gt)
 
